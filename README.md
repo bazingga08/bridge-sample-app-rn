@@ -1,79 +1,56 @@
-This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
+# Acme — Bridge React Native (CLI) sample
 
-# Getting Started
+A bare React Native app you fully control (real `AndroidManifest.xml`,
+`Info.plist`, entitlements) to test Bridge end-to-end — including native
+**App Links (Android)** + **Universal Links (iOS)** verified via Bridge's
+`/.well-known/assetlinks.json` and `apple-app-site-association`.
 
->**Note**: Make sure you have completed the [React Native - Environment Setup](https://reactnative.dev/docs/environment-setup) instructions till "Creating a new application" step, before proceeding.
+Pre-wired for the host **bridge-redirect-engine.onrender.com**:
+- `android/app/src/main/AndroidManifest.xml` — `autoVerify` intent-filter (https host) + `acmebridge://` scheme
+- `ios/AcmeBridge/AcmeBridge.entitlements` — `applinks:` Associated Domain
+- `App.tsx` — shows the opening link (proves direct open) + deferred `/v1/match` + events
 
-## Step 1: Start the Metro Server
-
-First, you will need to start **Metro**, the JavaScript _bundler_ that ships _with_ React Native.
-
-To start Metro, run the following command from the _root_ of your React Native project:
-
-```bash
-# using npm
-npm start
-
-# OR using Yarn
-yarn start
+## Setup
+```sh
+npm install
 ```
 
-## Step 2: Start your Application
+## ▶️ Android — the real App-Links test (no paid account)
+1. Run on a connected device/emulator (debug build):
+   ```sh
+   npx react-native run-android
+   ```
+2. Get the build's signing **SHA-256**:
+   ```sh
+   cd android && ./gradlew signingReport
+   # copy the SHA-256 under "Variant: debug" (Config: debug)
+   ```
+3. **Send me that SHA-256** → I add it to the Bridge app config so
+   `https://bridge-redirect-engine.onrender.com/.well-known/assetlinks.json`
+   lists `com.acmebridge`/your package + the fingerprint (currently 404 — by design, no SHA yet).
+4. Re-verify the link association on the device:
+   ```sh
+   adb shell pm verify-app-links --re-verify com.acmebridge
+   adb shell pm get-app-links com.acmebridge   # should show the host as "verified"
+   ```
+5. **Tap a Bridge link** on the phone (e.g. from a chat) → Acme opens directly →
+   the green "Opened via link" banner shows. ✅ App Links verified.
 
-Let Metro Bundler run in its _own_ terminal. Open a _new_ terminal from the _root_ of your React Native project. Run the following command to start your _Android_ or _iOS_ app:
+> The package id is whatever `applicationId` is in `android/app/build.gradle`
+> (default `com.acmebridge`). Tell me the exact one with the SHA.
 
-### For Android
+## 🍎 iOS — Universal Links (needs Apple Developer account)
+1. Open `ios/AcmeBridge.xcworkspace` in Xcode → target → **Signing & Capabilities**
+   → **+ Capability → Associated Domains** (this wires the `.entitlements` file).
+2. Set your Team in Signing. Send me your **Team ID + bundle id** → I put them in
+   the Bridge app config so `apple-app-site-association` is valid.
+3. Build to a real device (free 7-day provisioning works for a quick test, or TestFlight).
+4. Tap a Bridge link → Acme opens directly.
 
-```bash
-# using npm
-npm run android
-
-# OR using Yarn
-yarn android
-```
-
-### For iOS
-
-```bash
-# using npm
-npm run ios
-
-# OR using Yarn
-yarn ios
-```
-
-If everything is set up _correctly_, you should see your new app running in your _Android Emulator_ or _iOS Simulator_ shortly provided you have set up your emulator/simulator correctly.
-
-This is one way to run your app — you can also run it directly from within Android Studio and Xcode respectively.
-
-## Step 3: Modifying your App
-
-Now that you have successfully run the app, let's modify it.
-
-1. Open `App.tsx` in your text editor of choice and edit some lines.
-2. For **Android**: Press the <kbd>R</kbd> key twice or select **"Reload"** from the **Developer Menu** (<kbd>Ctrl</kbd> + <kbd>M</kbd> (on Window and Linux) or <kbd>Cmd ⌘</kbd> + <kbd>M</kbd> (on macOS)) to see your changes!
-
-   For **iOS**: Hit <kbd>Cmd ⌘</kbd> + <kbd>R</kbd> in your iOS Simulator to reload the app and see your changes!
-
-## Congratulations! :tada:
-
-You've successfully run and modified your React Native App. :partying_face:
-
-### Now what?
-
-- If you want to add this new React Native code to an existing application, check out the [Integration guide](https://reactnative.dev/docs/integration-with-existing-apps).
-- If you're curious to learn more about React Native, check out the [Introduction to React Native](https://reactnative.dev/docs/getting-started).
-
-# Troubleshooting
-
-If you can't get this to work, see the [Troubleshooting](https://reactnative.dev/docs/troubleshooting) page.
-
-# Learn More
-
-To learn more about React Native, take a look at the following resources:
-
-- [React Native Website](https://reactnative.dev) - learn more about React Native.
-- [Getting Started](https://reactnative.dev/docs/environment-setup) - an **overview** of React Native and how setup your environment.
-- [Learn the Basics](https://reactnative.dev/docs/getting-started) - a **guided tour** of the React Native **basics**.
-- [Blog](https://reactnative.dev/blog) - read the latest official React Native **Blog** posts.
-- [`@facebook/react-native`](https://github.com/facebook/react-native) - the Open Source; GitHub **repository** for React Native.
+## What proves what
+| Test | Proves |
+|---|---|
+| `run-android` + tap link (after SHA) | **Android App Links** via assetlinks.json |
+| iOS signed build + tap link | **Universal Links** via apple-app-site-association |
+| "Check for a deferred link" button | deferred `/v1/match` round-trip |
+| signup / purchase buttons | conversion events → dashboard funnel |

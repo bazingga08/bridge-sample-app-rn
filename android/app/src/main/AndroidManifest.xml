@@ -21,6 +21,23 @@
             <action android:name="android.intent.action.MAIN" />
             <category android:name="android.intent.category.LAUNCHER" />
         </intent-filter>
+        <!-- Bridge App Links: verified https links to this host open the app
+             directly. autoVerify makes Android fetch /.well-known/assetlinks.json
+             from the host and check it lists this package + signing SHA-256. -->
+        <intent-filter android:autoVerify="true">
+            <action android:name="android.intent.action.VIEW" />
+            <category android:name="android.intent.category.DEFAULT" />
+            <category android:name="android.intent.category.BROWSABLE" />
+            <data android:scheme="https"
+                  android:host="bridge-redirect-engine.onrender.com" />
+        </intent-filter>
+        <!-- Custom-scheme fallback (always works, no verification needed). -->
+        <intent-filter>
+            <action android:name="android.intent.action.VIEW" />
+            <category android:name="android.intent.category.DEFAULT" />
+            <category android:name="android.intent.category.BROWSABLE" />
+            <data android:scheme="acmebridge" />
+        </intent-filter>
       </activity>
     </application>
 </manifest>

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <!-- Universal Links: iOS fetches https://<domain>/.well-known/apple-app-site-association
+       and opens this app for matching links once your Team ID + bundle are in it.
+       Add this capability in Xcode → Signing & Capabilities → Associated Domains
+       (which links this file), then a signed build verifies. Needs Apple Dev account. -->
+  <key>com.apple.developer.associated-domains</key>
+  <array>
+    <string>applinks:bridge-redirect-engine.onrender.com</string>
+  </array>
+</dict>
+</plist>
