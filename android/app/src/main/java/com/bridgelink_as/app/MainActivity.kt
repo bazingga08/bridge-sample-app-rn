@@ -1,4 +1,4 @@
-package com.acmebridge
+package com.bridgelink_as.app
 
 import com.facebook.react.ReactActivity
 import com.facebook.react.ReactActivityDelegate

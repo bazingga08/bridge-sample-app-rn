@@ -72,3 +72,10 @@ yarn-error.log
 !.yarn/releases
 !.yarn/sdks
 !.yarn/versions
+
+# Release signing — NEVER commit these
+android/keystore.properties
+android/app/bridgelink-upload.keystore
+*.keystore
+!android/app/debug.keystore
+screenshot-*.png
