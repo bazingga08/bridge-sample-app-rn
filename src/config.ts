@@ -1,0 +1,23 @@
+/**
+ * Bridge setup for this app, exactly as a customer would configure it:
+ * the link host and the workspace's publishable key (Dashboard → Get started).
+ * Both can be changed at runtime in Settings.
+ */
+export const DEFAULT_ENDPOINT = 'https://bridge-redirect-engine.onrender.com';
+export const DEFAULT_PUBLISHABLE_KEY = 'bk_pub_live_62406c705fed406db90c1deeecdb183b';
+
+/** Browser side of the fingerprint check (GitHub Pages, not the link domain). */
+export const FINGERPRINT_PAGE = 'https://bazingga08.github.io/bridge-demo-site/fingerprint.html';
+/** A browser page that shows a link to tap (for the "tap inside Chrome" tests). */
+export const BROWSER_LINK_PAGE = 'https://bazingga08.github.io/bridge-demo-site/open.html';
+
+/** Ready-made test links (workspace "bridge-dev"), one per destination screen. */
+export const TEST_LINKS: Array<{ slug: string; label: string; opens: string }> = [
+  { slug: 'bl-product', label: 'Product link', opens: 'Product #42 (red)' },
+  { slug: 'bl-category', label: 'Category link', opens: 'Shoes category' },
+  { slug: 'bl-promo', label: 'Coupon link', opens: 'Applies DIWALI20, opens cart' },
+  { slug: 'bl-order', label: 'Order link (needs login)', opens: 'Login, then order #1001' },
+  { slug: 'bl-invite', label: 'Invite link', opens: 'Invite from ANU' },
+  { slug: 'bl-unknown', label: 'Unknown page link', opens: '"Link not recognised" screen' },
+  { slug: 'bl-expired', label: 'Expired link', opens: 'An "expired" message' },
+];

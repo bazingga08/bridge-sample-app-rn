@@ -1,56 +1,70 @@
-# Acme — Bridge React Native (CLI) sample
+# Bridge Link — deep-link test app
 
-A bare React Native app you fully control (real `AndroidManifest.xml`,
-`Info.plist`, entitlements) to test Bridge end-to-end — including native
-**App Links (Android)** + **Universal Links (iOS)** verified via Bridge's
-`/.well-known/assetlinks.json` and `apple-app-site-association`.
+A small "customer" app used to prove every way a Bridge link can open an app.
+It integrates Bridge **only through the public SDK** (`@bridge/sdk-react-native`),
+exactly as any other app would.
 
-Pre-wired for the host **bridge-redirect-engine.onrender.com**:
-- `android/app/src/main/AndroidManifest.xml` — `autoVerify` intent-filter (https host) + `acmebridge://` scheme
-- `ios/AcmeBridge/AcmeBridge.entitlements` — `applinks:` Associated Domain
-- `App.tsx` — shows the opening link (proves direct open) + deferred `/v1/match` + events
+- **Home = checklist.** Each row is one scenario (tap from Messages with the app
+  closed / in background / on screen, tap inside Chrome, deferred install from
+  Google Play, fingerprint match, navigation, analytics). Rows turn green by
+  themselves when the app sees the scenario work, with the proof underneath.
+- **Test links** — real short links on the live engine, with Share / Open as a
+  link / Open via browser.
+- **Link Inspector** — every link event from the SDK: route, app state,
+  received URL, destination, timing.
+- **Fingerprint** — compares the app's fingerprint with the browser's on the
+  same phone (what iPhone deferred matching relies on).
+- **Screens to land on** — product, category, coupon, cart, order (behind
+  login), invite, and "link not recognised".
 
-## Setup
-```sh
-npm install
+Package `com.bridgelink_as.app` · scheme `bridgelink://` · verified link host
+`bridge-redirect-engine.onrender.com` (see `AndroidManifest.xml`).
+
+## The SDK integration (all of it)
+
+```ts
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { PlayInstallReferrer } from 'react-native-play-install-referrer';
+import { createBridge, fromPlayInstallReferrer } from '@bridge/sdk-react-native';
+
+const bridge = createBridge({
+  publishableKey: 'bk_pub_live_…',            // Dashboard → Get started
+  endpoint: 'https://bridge-redirect-engine.onrender.com',
+  storage: AsyncStorage,                       // deferred check once per install
+  installReferrer: fromPlayInstallReferrer(PlayInstallReferrer),
+});
+bridge.onLink((e) => navigateTo(e.path, e.params)); // every case, one callback
+bridge.start();
 ```
 
-## ▶️ Android — the real App-Links test (no paid account)
-1. Run on a connected device/emulator (debug build):
-   ```sh
-   npx react-native run-android
-   ```
-2. Get the build's signing **SHA-256**:
-   ```sh
-   cd android && ./gradlew signingReport
-   # copy the SHA-256 under "Variant: debug" (Config: debug)
-   ```
-3. **Send me that SHA-256** → I add it to the Bridge app config so
-   `https://bridge-redirect-engine.onrender.com/.well-known/assetlinks.json`
-   lists `com.acmebridge`/your package + the fingerprint (currently 404 — by design, no SHA yet).
-4. Re-verify the link association on the device:
-   ```sh
-   adb shell pm verify-app-links --re-verify com.acmebridge
-   adb shell pm get-app-links com.acmebridge   # should show the host as "verified"
-   ```
-5. **Tap a Bridge link** on the phone (e.g. from a chat) → Acme opens directly →
-   the green "Opened via link" banner shows. ✅ App Links verified.
+See `src/store.tsx` (setup) and `App.tsx` (routing).
 
-> The package id is whatever `applicationId` is in `android/app/build.gradle`
-> (default `com.acmebridge`). Tell me the exact one with the SHA.
+## Build
 
-## 🍎 iOS — Universal Links (needs Apple Developer account)
-1. Open `ios/AcmeBridge.xcworkspace` in Xcode → target → **Signing & Capabilities**
-   → **+ Capability → Associated Domains** (this wires the `.entitlements` file).
-2. Set your Team in Signing. Send me your **Team ID + bundle id** → I put them in
-   the Bridge app config so `apple-app-site-association` is valid.
-3. Build to a real device (free 7-day provisioning works for a quick test, or TestFlight).
-4. Tap a Bridge link → Acme opens directly.
+This repo sits next to the SDK in the Bridge workspace and installs it from the
+local folder as a real package copy (`.npmrc` → `install-links=true`):
 
-## What proves what
-| Test | Proves |
-|---|---|
-| `run-android` + tap link (after SHA) | **Android App Links** via assetlinks.json |
-| iOS signed build + tap link | **Universal Links** via apple-app-site-association |
-| "Check for a deferred link" button | deferred `/v1/match` round-trip |
-| signup / purchase buttons | conversion events → dashboard funnel |
+```
+bridge/
+├─ sdk-react-native/
+└─ samples/AcmeBridge/   ← this app
+```
+
+```bash
+npm install
+npm run sdk:refresh      # after changing the SDK: re-copies it AND clears the
+                         # cached release bundle (Gradle doesn't track node_modules)
+npm test                 # routing + checklist logic + a real render
+npm run build:release    # android/app/build/outputs/apk/release/app-release.apk
+cd android && ./gradlew bundleRelease   # .aab for Google Play
+```
+
+Release signing reads `android/keystore.properties` + the upload keystore
+(both gitignored). Publishing steps: `PUBLISH-PLAY-STORE.md`.
+
+## Verified on a real phone (Android 16, 2026-10-02)
+
+12 of 14 checklist rows pass: Messages-style taps (closed / background / on
+screen), Chrome hand-off (closed / background), product, coupon, login-gated
+order, unknown link, expired link, purchase event, and app-vs-browser
+fingerprint match. The two deferred rows need the app installed from Google Play.
