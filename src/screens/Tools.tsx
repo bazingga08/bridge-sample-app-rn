@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { AppState, Linking, Share, Text, TextInput, View } from 'react-native';
 import { describeEvent } from '../checklist';
-import { BROWSER_LINK_PAGE, FINGERPRINT_PAGE, TEST_LINKS } from '../config';
+import { BROWSER_LINK_PAGE, FINGERPRINT_PAGE, PRIVACY_POLICY_URL, TEST_LINKS } from '../config';
 import { useStore } from '../store';
 import { Button, C, Card, H1, H2, Mono, P, Pill, Row, Screen, s } from '../ui';
 
@@ -171,6 +171,11 @@ export function SettingsScreen() {
       <Card>
         <H2>Checklist</H2>
         <Button title="Reset all results" kind="ghost" onPress={resetResults} />
+      </Card>
+      <Card>
+        <H2>About</H2>
+        <P muted>What this app and the Bridge service collect, and why.</P>
+        <Button title="Privacy policy" kind="ghost" onPress={() => Linking.openURL(PRIVACY_POLICY_URL)} />
       </Card>
     </Screen>
   );

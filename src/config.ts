@@ -6,6 +6,9 @@
 export const DEFAULT_ENDPOINT = 'https://bridge-redirect-engine.onrender.com';
 export const DEFAULT_PUBLISHABLE_KEY = 'bk_pub_live_62406c705fed406db90c1deeecdb183b';
 
+/** Required by Google Play: linked from the store listing and from Settings. */
+export const PRIVACY_POLICY_URL = 'https://bazingga08.github.io/bridge-demo-site/privacy.html';
+
 /** Browser side of the fingerprint check (GitHub Pages, not the link domain). */
 export const FINGERPRINT_PAGE = 'https://bazingga08.github.io/bridge-demo-site/fingerprint.html';
 /** A browser page that shows a link to tap (for the "tap inside Chrome" tests). */
