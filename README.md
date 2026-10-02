@@ -62,6 +62,19 @@ cd android && ./gradlew bundleRelease   # .aab for Google Play
 Release signing reads `android/keystore.properties` + the upload keystore
 (both gitignored). Publishing steps: `PUBLISH-PLAY-STORE.md`.
 
+## Automated device test
+
+With the phone connected over USB (`adb devices`):
+
+```bash
+scripts/device-test.sh        # ~2 min, prints PASS/FAIL per scenario
+```
+
+Checks where each tap really lands: app closed / in background / on screen,
+Messages-style and Chrome taps, expired and unknown links, app **not installed**
+(store mode → Google Play; auto mode with an unlisted app → the website), and
+reinstall. Deferred-after-install needs a real Google Play install.
+
 ## Verified on a real phone (Android 16, 2026-10-02)
 
 12 of 14 checklist rows pass: Messages-style taps (closed / background / on
