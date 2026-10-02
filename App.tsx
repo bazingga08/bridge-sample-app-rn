@@ -10,6 +10,7 @@ import type { LinkEvent } from '@bridge/sdk-react-native';
 import { navRef, type Stack } from './src/nav';
 import { routeFor } from './src/routes';
 import { StoreProvider } from './src/store';
+import { OpeningOverlay } from './src/OpeningOverlay';
 import { HomeScreen } from './src/screens/Home';
 import { FingerprintScreen, InspectorScreen, SettingsScreen, TestLinksScreen } from './src/screens/Tools';
 import {
@@ -92,6 +93,7 @@ export default function App(): React.JSX.Element {
           <S.Screen name="NotRecognised" component={NotRecognisedScreen} options={{ title: 'Not recognised' }} />
         </S.Navigator>
       </NavigationContainer>
+      <OpeningOverlay />
     </StoreProvider>
   );
 }

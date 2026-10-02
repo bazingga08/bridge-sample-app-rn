@@ -26,6 +26,8 @@ interface AppStore {
   notice: string | null;
   setNotice: (n: string | null) => void;
   saveConfig: (endpoint: string, key: string) => Promise<void>;
+  /** A link is being resolved right now (show a loading state). */
+  opening: { kind: 'direct' | 'deferred' } | null;
 }
 
 const Ctx = createContext<AppStore | null>(null);
@@ -61,6 +63,7 @@ export function StoreProvider({
   const [loggedIn, setLoggedInState] = useState(false);
   const [cart, setCart] = useState<Cart>({ items: [] });
   const [notice, setNotice] = useState<string | null>(null);
+  const [opening, setOpening] = useState<{ id: string; kind: 'direct' | 'deferred' } | null>(null);
   const resultsRef = useRef<Results>({});
   const onLinkRef = useRef(onLink);
   onLinkRef.current = onLink;
@@ -92,7 +95,15 @@ export function StoreProvider({
   useEffect(() => {
     if (!bridge) return;
     let sawDeferred = false;
+    let safety: ReturnType<typeof setTimeout> | undefined;
+    const offStart = bridge.onLinkStart((s) => {
+      setOpening({ id: s.id, kind: s.kind });
+      // Never leave the overlay up if something goes wrong.
+      clearTimeout(safety);
+      safety = setTimeout(() => setOpening(null), 15_000);
+    });
     const off = bridge.onLink((e) => {
+      setOpening((cur) => (cur?.id === e.id ? null : cur));
       if (e.kind === 'deferred') sawDeferred = true;
       setEvents((prev) => [e, ...prev].slice(0, 100));
       const item = itemForEvent(e);
@@ -108,6 +119,8 @@ export function StoreProvider({
     });
     return () => {
       off();
+      offStart();
+      clearTimeout(safety);
       bridge.stop();
     };
   }, [bridge, pass]);
@@ -135,6 +148,7 @@ export function StoreProvider({
         setCart,
         notice,
         setNotice,
+        opening: opening ? { kind: opening.kind } : null,
         saveConfig: async (endpoint, key) => {
           await AsyncStorage.multiSet([[K.endpoint, endpoint], [K.key, key]]);
           setConfig({ endpoint, key });
