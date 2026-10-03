@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Real-phone ANALYTICS suite: every way a link can reach (or miss) the app, and
-# the exact rows Bridge must record for each — taps, app opens, joins between
+# the exact rows Strait must record for each — taps, app opens, joins between
 # them (same tap letter), new vs existing user, app state, failures.
 #   scripts/analytics-test.sh [path/to/app-release.apk]
 # Needs: one Android phone on adb (Chrome, Samsung Internet, Firefox, Edge
@@ -8,10 +8,10 @@
 # Play-install deferred linking is NOT covered (needs a real Play install).
 set -u
 APK="${1:-android/app/build/outputs/apk/release/app-release.apk}"
-E="${BRIDGE_ENGINE:-https://bridge-redirect-engine.onrender.com}"
-T="${BRIDGE_TENANT:-0a2b8762-edb7-4e07-9587-12c1f451c0ea}"   # bridge-dev
-P=com.bridgelink_as.app
-PAGE=https://bazingga08.github.io/bridge-demo-site/open.html
+E="${STRAIT_ENGINE:-https://bridge-redirect-engine.onrender.com}"
+T="${STRAIT_TENANT:-0a2b8762-edb7-4e07-9587-12c1f451c0ea}"   # strait-dev
+P=com.straitlink.app
+PAGE=https://bazingga08.github.io/strait-demo-site/open.html
 HERE="$(cd "$(dirname "$0")" && pwd)"
 pass=0; fail=0; results=()
 
@@ -99,8 +99,8 @@ home; adb shell monkey -p $P -c android.intent.category.LAUNCHER 1 >/dev/null 2>
 expect "Offline tap: saved, sent on return — open (failed: network) + tap, once" "$S" "OPEN bl-order app_link background existing failed:network tap=-
 TAP bl-order app_link - tap=-"
 
-echo "▶ 6. Broken and non-Bridge links"
-S=$(now); direct "$E/bl-expired"; direct "$E/no-such-link-$(date +%s)"; direct "bridgelink://shop.example/p/7?src=qr"
+echo "▶ 6. Broken and non-Strait links"
+S=$(now); direct "$E/bl-expired"; direct "$E/no-such-link-$(date +%s)"; direct "straitlink://shop.example/p/7?src=qr"
 expect "Expired / deleted / plain-scheme: failed opens + an 'other' open, no taps" "$S" "OPEN - app_link foreground existing failed:not_found tap=-
 OPEN - custom_scheme foreground existing ok tap=-
 OPEN bl-expired app_link foreground existing failed:expired tap=-"

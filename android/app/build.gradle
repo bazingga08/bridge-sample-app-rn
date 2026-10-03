@@ -84,9 +84,9 @@ android {
     buildToolsVersion rootProject.ext.buildToolsVersion
     compileSdk rootProject.ext.compileSdkVersion
 
-    namespace "com.bridgelink_as.app"
+    namespace "com.straitlink.app"
     defaultConfig {
-        applicationId "com.bridgelink_as.app"
+        applicationId "com.straitlink.app"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 9

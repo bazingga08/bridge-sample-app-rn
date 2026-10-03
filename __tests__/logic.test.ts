@@ -1,7 +1,7 @@
 import { describe, expect, it } from '@jest/globals';
 import { routeFor } from '../src/routes';
 import { itemForEvent } from '../src/checklist';
-import type { LinkEvent } from '@bridge/sdk-react-native';
+import type { LinkEvent } from '@strait/sdk-react-native';
 
 const ev = (over: Partial<LinkEvent>): LinkEvent => ({
   id: 'e', kind: 'direct', route: 'app_link', appState: 'closed', matched: true, ms: 1, at: 1, ...over,

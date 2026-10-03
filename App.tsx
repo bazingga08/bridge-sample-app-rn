@@ -1,12 +1,12 @@
 /**
- * Bridge Link — a debuggable "customer" app for testing every deep-link case.
- * It integrates Bridge only through the public SDK (@bridge/sdk-react-native),
+ * Strait Link — a debuggable "customer" app for testing every deep-link case.
+ * It integrates Strait only through the public SDK (@strait/sdk-react-native),
  * the same way any app would. See README.md.
  */
 import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import type { LinkEvent } from '@bridge/sdk-react-native';
+import type { LinkEvent } from '@strait/sdk-react-native';
 import { navRef, type Stack } from './src/nav';
 import { routeFor } from './src/routes';
 import { StoreProvider } from './src/store';
@@ -24,7 +24,7 @@ const REASONS: Record<string, string> = {
   expired: 'This link has expired.',
   not_found: 'This link does not exist (or belongs to another app).',
   password_protected: 'This link is password-protected; open it in the browser.',
-  network: 'Could not reach Bridge to open this link. Check your connection.',
+  network: 'Could not reach Strait to open this link. Check your connection.',
   no_match: '',
 };
 
@@ -78,7 +78,7 @@ export default function App(): React.JSX.Element {
         }}
       >
         <S.Navigator screenOptions={{ headerTintColor: '#0b6b57' }}>
-          <S.Screen name="Home" component={HomeScreen} options={{ title: 'Bridge Link' }} />
+          <S.Screen name="Home" component={HomeScreen} options={{ title: 'Strait Link' }} />
           <S.Screen name="TestLinks" component={TestLinksScreen} options={{ title: 'Test links' }} />
           <S.Screen name="Inspector" component={InspectorScreen} options={{ title: 'Link Inspector' }} />
           <S.Screen name="Fingerprint" component={FingerprintScreen} options={{ title: 'Fingerprint' }} />

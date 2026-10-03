@@ -3,10 +3,10 @@ module.exports = {
   setupFiles: ['./jest.setup.js'],
   // Metro resolves the SDK's "react-native" entry; make Jest match it.
   moduleNameMapper: {
-    '^@bridge/sdk-react-native$': '<rootDir>/node_modules/@bridge/sdk-react-native/dist/index.native.js',
+    '^@strait/sdk-react-native$': '<rootDir>/node_modules/@strait/sdk-react-native/dist/index.native.js',
   },
   // These ship untranspiled ESM; let babel-jest handle them.
   transformIgnorePatterns: [
-    'node_modules/(?!((jest-)?react-native|@react-native(-community)?|@react-navigation|@bridge|react-native-screens|react-native-safe-area-context)/)',
+    'node_modules/(?!((jest-)?react-native|@react-native(-community)?|@react-navigation|@strait|react-native-screens|react-native-safe-area-context)/)',
   ],
 };

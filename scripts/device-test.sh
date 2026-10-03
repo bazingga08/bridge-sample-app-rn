@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Real-device deep-link test suite for Bridge Link. Drives a USB-connected
+# Real-device deep-link test suite for Strait Link. Drives a USB-connected
 # Android phone with adb and checks where each tap actually lands.
 #
 #   scripts/device-test.sh [path/to/app-release.apk]
@@ -10,8 +10,8 @@
 # Deferred-after-install needs a real Google Play install and is NOT covered here.
 set -u
 APK="${1:-android/app/build/outputs/apk/release/app-release.apk}"
-E="${BRIDGE_ENGINE:-https://bridge-redirect-engine.onrender.com}"
-P=com.bridgelink_as.app
+E="${STRAIT_ENGINE:-https://bridge-redirect-engine.onrender.com}"
+P=com.straitlink.app
 pass=0; fail=0; results=()
 
 texts() {  # visible texts of the current screen, one per line
@@ -59,7 +59,7 @@ expect_top() {  # name, expected
 direct() { adb shell am start -a android.intent.action.VIEW -d "$E/$1$(fresh)" >/dev/null 2>&1; }
 # Each automated Chrome tap uses a fresh tab: Chrome throttles a tab that keeps
 # launching apps without a user gesture (a real finger tap is not affected).
-chrome() { adb shell am start -a android.intent.action.VIEW -d "$E/$1$(fresh)" -p com.android.chrome --ez create_new_tab true -e com.android.browser.application_id bridge.devicetest >/dev/null 2>&1; }
+chrome() { adb shell am start -a android.intent.action.VIEW -d "$E/$1$(fresh)" -p com.android.chrome --ez create_new_tab true -e com.android.browser.application_id strait.devicetest >/dev/null 2>&1; }
 killapp() { adb shell am force-stop $P; sleep 1; }
 launch() { adb shell monkey -p $P -c android.intent.category.LAUNCHER 1 >/dev/null 2>&1; sleep 4; }
 home() { adb shell input keyevent KEYCODE_HOME; sleep 3; }

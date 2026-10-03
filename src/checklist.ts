@@ -1,4 +1,4 @@
-import type { LinkEvent } from '@bridge/sdk-react-native';
+import type { LinkEvent } from '@strait/sdk-react-native';
 
 export type ItemId =
   | 'msg_closed' | 'msg_background' | 'msg_foreground'
@@ -26,18 +26,18 @@ const SEND = 'Send yourself a test link (Test links → Share) in WhatsApp or Me
 export const SECTIONS: Section[] = [
   {
     title: 'Tap a link in Messages / WhatsApp',
-    intro: 'Android opens this app directly, with no browser. The app then asks Bridge where the short link points.',
+    intro: 'Android opens this app directly, with no browser. The app then asks Strait where the short link points.',
     items: [
-      { id: 'msg_closed', title: 'App was closed', how: [SEND, 'Swipe Bridge Link away from recent apps.', 'Tap the link.'] },
-      { id: 'msg_background', title: 'App was in the background', how: [SEND, 'Open Bridge Link, then press Home.', 'Tap the link.'] },
+      { id: 'msg_closed', title: 'App was closed', how: [SEND, 'Swipe Strait Link away from recent apps.', 'Tap the link.'] },
+      { id: 'msg_background', title: 'App was in the background', how: [SEND, 'Open Strait Link, then press Home.', 'Tap the link.'] },
       { id: 'msg_foreground', title: 'App was on screen', how: ['Test links → tap "Open as a link" (sends the link to Android while the app is open).'] },
     ],
   },
   {
     title: 'Tap a link inside Chrome',
-    intro: 'The link loads in Chrome first; Bridge then hands off to the app with the destination.',
+    intro: 'The link loads in Chrome first; Strait then hands off to the app with the destination.',
     items: [
-      { id: 'chrome_closed', title: 'App was closed', how: ['Test links → "Open via browser" (a page opens in Chrome).', 'Swipe Bridge Link away from recent apps.', 'Back in Chrome, tap "Open the link".'] },
+      { id: 'chrome_closed', title: 'App was closed', how: ['Test links → "Open via browser" (a page opens in Chrome).', 'Swipe Strait Link away from recent apps.', 'Back in Chrome, tap "Open the link".'] },
       { id: 'chrome_background', title: 'App was in the background', how: ['Test links → "Open via browser".', 'In Chrome, tap "Open the link".'] },
     ],
   },
@@ -45,7 +45,7 @@ export const SECTIONS: Section[] = [
     title: 'Install first, then open (deferred)',
     intro: 'Someone taps a link without the app, installs it from Google Play, and lands on the right screen on first open.',
     items: [
-      { id: 'deferred_referrer', title: 'First open lands on the tapped link', how: ['Uninstall Bridge Link.', 'Tap a test link: it opens Google Play.', 'Install from Play and open the app.'] },
+      { id: 'deferred_referrer', title: 'First open lands on the tapped link', how: ['Uninstall Strait Link.', 'Tap a test link: it opens Google Play.', 'Install from Play and open the app.'] },
       { id: 'deferred_once', title: 'Happens only on the first open', how: ['After the step above passes, close and reopen the app.', 'It should NOT jump to the link again.'] },
     ],
   },
@@ -69,9 +69,9 @@ export const SECTIONS: Section[] = [
   },
   {
     title: 'Analytics',
-    intro: 'What happened in the app reaches the Bridge dashboard.',
+    intro: 'What happened in the app reaches the Strait dashboard.',
     items: [
-      { id: 'purchase_event', title: 'Purchase reaches Bridge', how: ['Open any product and tap "Buy".', 'Dashboard → Analytics shows the purchase.'] },
+      { id: 'purchase_event', title: 'Purchase reaches Strait', how: ['Open any product and tap "Buy".', 'Dashboard → Analytics shows the purchase.'] },
     ],
   },
 ];

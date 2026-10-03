@@ -14,7 +14,7 @@ function LinkBadge({ show }: { show?: boolean }) {
 
 export function ProductScreen({ route, navigation }: Props<'Product'>) {
   const { id, color, linkId, fromLink } = route.params;
-  const { pass, bridge, cart, setCart } = useStore();
+  const { pass, strait, cart, setCart } = useStore();
   const [bought, setBought] = useState<string>('');
   useEffect(() => {
     if (fromLink && id === '42' && color === 'red') pass('nav_product', 'Product #42 in red, from the link');
@@ -30,8 +30,8 @@ export function ProductScreen({ route, navigation }: Props<'Product'>) {
       <Button
         title="Buy now ($49.99)"
         onPress={async () => {
-          const ok = await bridge.trackEvent('purchase', { value: 49.99, currency: 'USD', linkId });
-          setBought(ok ? 'Purchase sent to Bridge (202).' : 'Bridge did not accept the purchase.');
+          const ok = await strait.trackEvent('purchase', { value: 49.99, currency: 'USD', linkId });
+          setBought(ok ? 'Purchase sent to Strait (202).' : 'Strait did not accept the purchase.');
           if (ok) pass('purchase_event', `purchase $49.99${linkId ? ` from ${linkId}` : ''}`);
         }}
       />

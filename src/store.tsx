@@ -1,7 +1,7 @@
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { PlayInstallReferrer } from 'react-native-play-install-referrer';
-import { createBridge, fromPlayInstallReferrer, type Bridge, type LinkEvent } from '@bridge/sdk-react-native';
+import { createStrait, fromPlayInstallReferrer, type Strait, type LinkEvent } from '@strait/sdk-react-native';
 import { DEFAULT_ENDPOINT, DEFAULT_PUBLISHABLE_KEY } from './config';
 import { itemForEvent, type ItemId, type Results } from './checklist';
 
@@ -11,7 +11,7 @@ interface Cart {
 }
 
 interface AppStore {
-  bridge: Bridge;
+  strait: Strait;
   endpoint: string;
   publishableKey: string;
   events: LinkEvent[];
@@ -39,9 +39,9 @@ export const useStore = (): AppStore => {
 
 const K = { results: 'bl.results', loggedIn: 'bl.loggedIn', endpoint: 'bl.endpoint', key: 'bl.key' };
 
-function makeBridge(endpoint: string, publishableKey: string): Bridge {
+function makeStrait(endpoint: string, publishableKey: string): Strait {
   // Exactly the integration a customer writes: key + host + storage + referrer.
-  return createBridge({
+  return createStrait({
     publishableKey,
     endpoint,
     storage: AsyncStorage,
@@ -90,19 +90,19 @@ export function StoreProvider({
     })();
   }, []);
 
-  const bridge = useMemo(() => (config ? makeBridge(config.endpoint, config.key) : null), [config]);
+  const strait = useMemo(() => (config ? makeStrait(config.endpoint, config.key) : null), [config]);
 
   useEffect(() => {
-    if (!bridge) return;
+    if (!strait) return;
     let sawDeferred = false;
     let safety: ReturnType<typeof setTimeout> | undefined;
-    const offStart = bridge.onLinkStart((s) => {
+    const offStart = strait.onLinkStart((s) => {
       setOpening({ id: s.id, kind: s.kind });
       // Never leave the overlay up if something goes wrong.
       clearTimeout(safety);
       safety = setTimeout(() => setOpening(null), 15_000);
     });
-    const off = bridge.onLink((e) => {
+    const off = strait.onLink((e) => {
       setOpening((cur) => (cur?.id === e.id ? null : cur));
       if (e.kind === 'deferred') sawDeferred = true;
       setEvents((prev) => [e, ...prev].slice(0, 100));
@@ -110,7 +110,7 @@ export function StoreProvider({
       if (item) pass(item, `${e.route} · ${e.appState} · ${e.path ?? e.reason ?? ''}`);
       onLinkRef.current(e, { loggedIn: loggedInRef.current, setNotice });
     });
-    void bridge.start().then(() => {
+    void strait.start().then(() => {
       // "Only once": a later launch after a deferred match must not re-route.
       const prior = resultsRef.current.deferred_referrer;
       if (prior?.passed && prior.at < sessionStart.current && !sawDeferred) {
@@ -121,13 +121,13 @@ export function StoreProvider({
       off();
       offStart();
       clearTimeout(safety);
-      bridge.stop();
+      strait.stop();
     };
-  }, [bridge, pass]);
+  }, [strait, pass]);
 
-  const value: AppStore | null = bridge && config
+  const value: AppStore | null = strait && config
     ? {
-        bridge,
+        strait,
         endpoint: config.endpoint,
         publishableKey: config.key,
         events,

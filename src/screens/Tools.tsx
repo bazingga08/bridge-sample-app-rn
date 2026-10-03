@@ -18,7 +18,7 @@ export function TestLinksScreen() {
     <Screen>
       <H1>Test links</H1>
       <P muted>
-        Real short links on the live Bridge server. Share one to yourself to test taps from
+        Real short links on the live Strait server. Share one to yourself to test taps from
         Messages, or open it here.
       </P>
       {TEST_LINKS.map((l) => {
@@ -41,10 +41,10 @@ export function TestLinksScreen() {
 }
 
 export function InspectorScreen() {
-  const { events, bridge } = useStore();
+  const { events, strait } = useStore();
   // Open reports the SDK couldn't send yet (offline): it retries on its own.
   const [pending, setPending] = useState<number | null>(null);
-  const refresh = useCallback(() => void bridge.pendingOpenReports().then(setPending, () => setPending(null)), [bridge]);
+  const refresh = useCallback(() => void strait.pendingOpenReports().then(setPending, () => setPending(null)), [strait]);
   useEffect(() => {
     refresh();
     const sub = AppState.addEventListener('change', (st) => st === 'active' && setTimeout(refresh, 1500));
@@ -53,11 +53,11 @@ export function InspectorScreen() {
   return (
     <Screen>
       <H1>Link Inspector</H1>
-      <P muted>Every link the app has received this session, newest first, as reported by the Bridge SDK.</P>
+      <P muted>Every link the app has received this session, newest first, as reported by the Strait SDK.</P>
       <Card>
         <H2>Analytics reports</H2>
-        <P>Every open is reported to Bridge. Waiting to send (offline): {pending ?? '…'}</P>
-        <Button title="Send now" kind="ghost" onPress={() => void bridge.flushOpenReports().then(refresh)} />
+        <P>Every open is reported to Strait. Waiting to send (offline): {pending ?? '…'}</P>
+        <Button title="Send now" kind="ghost" onPress={() => void strait.flushOpenReports().then(refresh)} />
       </Card>
       {events.length === 0 && <P>No links yet. Open a test link to see it here.</P>}
       {events.map((e) => (
@@ -91,36 +91,36 @@ function KV({ k, v }: { k: string; v: string }) {
 type Fp = { extHash?: string; inputs?: Record<string, string | number> } | null;
 
 export function FingerprintScreen() {
-  const { bridge, endpoint, publishableKey, pass } = useStore();
+  const { strait, endpoint, publishableKey, pass } = useStore();
   const [mine, setMine] = useState<Fp>(null);
   const [cmp, setCmp] = useState<{ match?: boolean; web?: Fp; differences?: string[] } | null>(null);
   const [error, setError] = useState('');
 
   const compare = useCallback(async () => {
     try {
-      const r = (await bridge.compareFingerprint()) as typeof cmp;
+      const r = (await strait.compareFingerprint()) as typeof cmp;
       setCmp(r);
       if (r?.match) pass('fingerprint_match', `Both sides: ${r.web?.extHash}`);
     } catch (e) {
       setError(String(e));
     }
-  }, [bridge, pass]);
+  }, [strait, pass]);
 
   useEffect(() => {
-    bridge
+    strait
       .reportFingerprint()
       .then((r) => setMine(r as Fp))
       .catch((e) => setError(String(e)));
     // When the user comes back from the browser check, compare automatically.
     const sub = AppState.addEventListener('change', (st) => st === 'active' && void compare());
     return () => sub.remove();
-  }, [bridge, compare]);
+  }, [strait, compare]);
 
   return (
     <Screen>
       <H1>Fingerprint check</H1>
       <P muted>
-        For iPhone deferred links, Bridge matches the fingerprint taken in the browser at the tap
+        For iPhone deferred links, Strait matches the fingerprint taken in the browser at the tap
         with the one the app sends on first open. Here both are taken on this phone, on the same
         network, and compared.
       </P>
@@ -164,7 +164,7 @@ export function SettingsScreen() {
     <Screen>
       <H1>Settings</H1>
       <Card>
-        <H2>Bridge setup</H2>
+        <H2>Strait setup</H2>
         <P muted>The link host and your workspace's publishable key (Dashboard → Get started).</P>
         <Text style={{ color: C.muted }}>Link host</Text>
         <TextInput style={input} value={ep} onChangeText={setEp} autoCapitalize="none" />
@@ -189,7 +189,7 @@ export function SettingsScreen() {
       </Card>
       <Card>
         <H2>About</H2>
-        <P muted>What this app and the Bridge service collect, and why.</P>
+        <P muted>What this app and the Strait service collect, and why.</P>
         <Button title="Privacy policy" kind="ghost" onPress={() => Linking.openURL(PRIVACY_POLICY_URL)} />
       </Card>
     </Screen>

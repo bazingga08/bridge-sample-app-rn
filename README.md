@@ -1,7 +1,7 @@
-# Bridge Link — deep-link test app
+# Strait Link — deep-link test app
 
-A small "customer" app used to prove every way a Bridge link can open an app.
-It integrates Bridge **only through the public SDK** (`@bridge/sdk-react-native`),
+A small "customer" app used to prove every way a Strait link can open an app.
+It integrates Strait **only through the public SDK** (`@strait/sdk-react-native`),
 exactly as any other app would.
 
 - **Home = checklist.** Each row is one scenario (tap from Messages with the app
@@ -17,7 +17,7 @@ exactly as any other app would.
 - **Screens to land on** — product, category, coupon, cart, order (behind
   login), invite, and "link not recognised".
 
-Package `com.bridgelink_as.app` · scheme `bridgelink://` · verified link host
+Package `com.straitlink.app` · scheme `straitlink://` · verified link host
 `bridge-redirect-engine.onrender.com` (see `AndroidManifest.xml`).
 
 ## The SDK integration (all of it)
@@ -25,29 +25,29 @@ Package `com.bridgelink_as.app` · scheme `bridgelink://` · verified link host
 ```ts
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { PlayInstallReferrer } from 'react-native-play-install-referrer';
-import { createBridge, fromPlayInstallReferrer } from '@bridge/sdk-react-native';
+import { createStrait, fromPlayInstallReferrer } from '@strait/sdk-react-native';
 
-const bridge = createBridge({
-  publishableKey: 'bk_pub_live_…',            // Dashboard → Get started
+const strait = createStrait({
+  publishableKey: 'st_pub_live_…',            // Dashboard → Get started
   endpoint: 'https://bridge-redirect-engine.onrender.com',
   storage: AsyncStorage,                       // deferred check once per install
   installReferrer: fromPlayInstallReferrer(PlayInstallReferrer),
 });
-bridge.onLink((e) => navigateTo(e.path, e.params)); // every case, one callback
-bridge.start();
+strait.onLink((e) => navigateTo(e.path, e.params)); // every case, one callback
+strait.start();
 ```
 
 See `src/store.tsx` (setup) and `App.tsx` (routing).
 
 ## Build
 
-This repo sits next to the SDK in the Bridge workspace and installs it from the
+This repo sits next to the SDK in the Strait workspace and installs it from the
 local folder as a real package copy (`.npmrc` → `install-links=true`):
 
 ```
-bridge/
+strait/
 ├─ sdk-react-native/
-└─ samples/AcmeBridge/   ← this app
+└─ samples/AcmeStrait/   ← this app
 ```
 
 ```bash

@@ -21,7 +21,7 @@
             <action android:name="android.intent.action.MAIN" />
             <category android:name="android.intent.category.LAUNCHER" />
         </intent-filter>
-        <!-- Bridge App Links: verified https links to this host open the app
+        <!-- Strait App Links: verified https links to this host open the app
              directly. autoVerify makes Android fetch /.well-known/assetlinks.json
              from the host and check it lists this package + signing SHA-256. -->
         <intent-filter android:autoVerify="true">
@@ -36,7 +36,7 @@
             <action android:name="android.intent.action.VIEW" />
             <category android:name="android.intent.category.DEFAULT" />
             <category android:name="android.intent.category.BROWSABLE" />
-            <data android:scheme="bridgelink" />
+            <data android:scheme="straitlink" />
         </intent-filter>
       </activity>
     </application>
