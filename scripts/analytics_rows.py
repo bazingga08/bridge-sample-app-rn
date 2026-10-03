@@ -12,7 +12,10 @@ engine = os.path.join(os.path.dirname(__file__), '..', '..', '..', 'redirect-eng
 sql = f"""
 select 'TAP' k, coalesce((select slug from links where id=link_id),'-') slug,
        source||' '||coalesce(sent_to,'-') v, click_id::text tap, clicked_at t
-  from link_clicks where tenant_id='{tenant}' and clicked_at >= '{since}' and source <> 'match'
+  from link_clicks where tenant_id='{tenant}' and source <> 'match'
+   -- a tap reported later by the app is dated by the PHONE's clock (can trail this
+   -- machine by a second or two); scenarios are ≥ 7 s apart, so 3 s is safe
+   and clicked_at >= timestamptz '{since}' - interval '3 seconds'
 union all
 select 'OPEN', coalesce((select slug from links where id=coalesce(o.link_id,(select link_id from link_clicks c where c.click_id=o.click_id))),'-'),
        route||' '||coalesce(app_state,'-')||' '||case when is_install then 'new' else 'existing' end||' '||case when matched then 'ok' else 'failed:'||coalesce(reason,'') end,
