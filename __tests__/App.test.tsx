@@ -16,4 +16,8 @@ it('renders the checklist home screen', async () => {
     await new Promise((r) => setTimeout(r, 50));
   });
   expect(JSON.stringify(tree!.toJSON())).toContain('Deep-link test checklist');
+  // Unmount so the store's effect cleanup clears its timers before Jest tears down.
+  await act(async () => {
+    tree!.unmount();
+  });
 });
