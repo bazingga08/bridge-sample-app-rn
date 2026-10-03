@@ -3,7 +3,7 @@
  * the link host and the workspace's publishable key (Dashboard → Get started).
  * Both can be changed at runtime in Settings.
  */
-export const DEFAULT_ENDPOINT = 'https://bridge-redirect-engine.onrender.com';
+export const DEFAULT_ENDPOINT = 'https://strait-dev.strait.link';
 export const DEFAULT_PUBLISHABLE_KEY = 'st_pub_live_62406c705fed406db90c1deeecdb183b';
 
 /** Required by Google Play: linked from the store listing and from Settings. */

@@ -10,7 +10,9 @@
 # Deferred-after-install needs a real Google Play install and is NOT covered here.
 set -u
 APK="${1:-android/app/build/outputs/apk/release/app-release.apk}"
-E="${STRAIT_ENGINE:-https://bridge-redirect-engine.onrender.com}"
+E="${STRAIT_ENGINE:-https://strait-dev.strait.link}"
+# "summer" lives in the test-inc workspace (store-less app): handle hosts only see their own links.
+TE="${STRAIT_TEST_INC:-https://test-inc.strait.link}"
 P=com.straitlink.app
 pass=0; fail=0; results=()
 
@@ -59,7 +61,7 @@ expect_top() {  # name, expected
 direct() { adb shell am start -a android.intent.action.VIEW -d "$E/$1$(fresh)" >/dev/null 2>&1; }
 # Each automated Chrome tap uses a fresh tab: Chrome throttles a tab that keeps
 # launching apps without a user gesture (a real finger tap is not affected).
-chrome() { adb shell am start -a android.intent.action.VIEW -d "$E/$1$(fresh)" -p com.android.chrome --ez create_new_tab true -e com.android.browser.application_id strait.devicetest >/dev/null 2>&1; }
+chrome() { local u="$1"; [[ "$u" == http* ]] || u="$E/$u"; adb shell am start -a android.intent.action.VIEW -d "$u$(fresh)" -p com.android.chrome --ez create_new_tab true -e com.android.browser.application_id strait.devicetest >/dev/null 2>&1; }
 killapp() { adb shell am force-stop $P; sleep 1; }
 launch() { adb shell monkey -p $P -c android.intent.category.LAUNCHER 1 >/dev/null 2>&1; sleep 4; }
 home() { adb shell input keyevent KEYCODE_HOME; sleep 3; }
@@ -88,7 +90,7 @@ direct bl-expired;            expect_text "Expired link → clear message"      
 echo "▶ App NOT installed"
 adb uninstall $P >/dev/null; home
 chrome bl-promo;              expect_top "Not installed · store mode → Google Play"      "com.android.vending"
-home; chrome summer;          expect_chrome_page "Not installed · auto mode, app not on Play → website (not 'Item not found')" "example.com/sale"
+home; chrome "$TE/summer";          expect_chrome_page "Not installed · auto mode, app not on Play → website (not 'Item not found')" "example.com/sale"
 install_app
 home; chrome bl-product;      expect_top "Reinstalled → link opens the app again"        "$P"
 

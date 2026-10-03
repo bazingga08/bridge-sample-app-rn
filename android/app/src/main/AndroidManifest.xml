@@ -29,7 +29,7 @@
             <category android:name="android.intent.category.DEFAULT" />
             <category android:name="android.intent.category.BROWSABLE" />
             <data android:scheme="https"
-                  android:host="bridge-redirect-engine.onrender.com" />
+                  android:host="strait-dev.strait.link" />
         </intent-filter>
         <!-- Custom-scheme fallback (always works, no verification needed). -->
         <intent-filter>

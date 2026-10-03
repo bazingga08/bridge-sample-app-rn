@@ -8,7 +8,7 @@
 # Play-install deferred linking is NOT covered (needs a real Play install).
 set -u
 APK="${1:-android/app/build/outputs/apk/release/app-release.apk}"
-E="${STRAIT_ENGINE:-https://bridge-redirect-engine.onrender.com}"
+E="${STRAIT_ENGINE:-https://strait-dev.strait.link}"
 T="${STRAIT_TENANT:-0a2b8762-edb7-4e07-9587-12c1f451c0ea}"   # strait-dev
 P=com.straitlink.app
 PAGE=https://bazingga08.github.io/strait-demo-site/open.html
