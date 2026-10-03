@@ -39,7 +39,9 @@ from_page() {
   local u; u=$(python3 -c "import urllib.parse,sys;print(urllib.parse.quote(sys.argv[1],safe=''))" "$E/$2?t=$(date +%s)")
   adb shell am force-stop "$1"; home
   adb shell am start -a android.intent.action.VIEW -d "$PAGE?u=$u" -p "$1" >/dev/null 2>&1; sleep 10
-  tapui '^Open the link$' || adb shell input tap 540 1400   # some browsers hide web text from the UI tree
+  tapui '^Cancel$' && sleep 2   # Firefox's "set as default browser?" dialog on cold start
+  tapui '^Not now$' && sleep 2  # ...and its notifications nag
+  tapui '^Open the link$' || adb shell input tap 540 1527   # some browsers hide web text from the UI tree
   sleep 5; tapui '^(Open|Open in app)$' && sleep 3; sleep 4
 }
 expect() {  # name, since, expected rows (one per line, any order)
