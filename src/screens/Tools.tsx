@@ -3,7 +3,7 @@ import { AppState, Linking, Share, Text, TextInput, View } from 'react-native';
 import { describeEvent } from '../checklist';
 import { BROWSER_LINK_PAGE, FINGERPRINT_PAGE, PRIVACY_POLICY_URL, TEST_LINKS } from '../config';
 import { useStore } from '../store';
-import { Button, Card, H1, H2, Mono, P, Pill, Row, Screen, useTheme } from '../ui';
+import { Button, Card, H2, Mono, P, Pill, Row, Screen, useTheme } from '../ui';
 
 /**
  * Open a page in the browser. The pages live on GitHub Pages, which this app
@@ -16,7 +16,6 @@ export function TestLinksScreen() {
   const { endpoint } = useStore();
   return (
     <Screen>
-      <H1>Test links</H1>
       <P muted>
         Real short links on the live Strait server. Share one to yourself to test taps from
         Messages, or open it here.
@@ -52,7 +51,6 @@ export function InspectorScreen() {
   }, [refresh, events.length]);
   return (
     <Screen>
-      <H1>Link Inspector</H1>
       <P muted>Every link the app has received this session, newest first, as reported by the Strait SDK.</P>
       <Card>
         <H2>Analytics reports</H2>
@@ -119,7 +117,6 @@ export function FingerprintScreen() {
 
   return (
     <Screen>
-      <H1>Fingerprint check</H1>
       <P muted>
         For iPhone deferred links, Strait matches the fingerprint taken in the browser at the tap
         with the one the app sends on first open. Here both are taken on this phone, on the same
@@ -164,7 +161,6 @@ export function SettingsScreen() {
   const { C, s } = useTheme();
   return (
     <Screen>
-      <H1>Settings</H1>
       <Card>
         <H2>Strait setup</H2>
         <P muted>The link host and your workspace's publishable key (Dashboard → Get started).</P>

@@ -91,7 +91,7 @@ export default function App(): React.JSX.Element {
           <S.Screen name="Home" component={HomeScreen} options={{ title: 'Strait Link' }} />
           <S.Screen name="TestLinks" component={TestLinksScreen} options={{ title: 'Test links' }} />
           <S.Screen name="Inspector" component={InspectorScreen} options={{ title: 'Link Inspector' }} />
-          <S.Screen name="Fingerprint" component={FingerprintScreen} options={{ title: 'Fingerprint' }} />
+          <S.Screen name="Fingerprint" component={FingerprintScreen} options={{ title: 'Fingerprint check' }} />
           <S.Screen name="Settings" component={SettingsScreen} />
           <S.Screen name="Product" component={ProductScreen} />
           <S.Screen name="Category" component={CategoryScreen} />
