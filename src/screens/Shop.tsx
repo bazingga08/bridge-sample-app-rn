@@ -3,7 +3,7 @@ import { Text } from 'react-native';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useStore } from '../store';
 import type { Stack } from '../nav';
-import { Banner, Button, C, Card, H1, H2, P, Screen } from '../ui';
+import { Banner, Button, Card, H1, H2, P, Screen, useTheme } from '../ui';
 
 type Props<K extends keyof Stack> = NativeStackScreenProps<Stack, K>;
 
@@ -60,6 +60,7 @@ export function CategoryScreen({ route, navigation }: Props<'Category'>) {
 export function PromoScreen({ route, navigation }: Props<'Promo'>) {
   const { code, fromLink } = route.params;
   const { cart, setCart, pass } = useStore();
+  const { C } = useTheme();
   useEffect(() => {
     setCart({ ...cart, coupon: code });
     if (fromLink && code === 'DIWALI20') pass('nav_promo', 'Coupon DIWALI20 applied from the link');
@@ -71,7 +72,7 @@ export function PromoScreen({ route, navigation }: Props<'Promo'>) {
       <LinkBadge show={fromLink} />
       <H1>Coupon applied</H1>
       <Card>
-        <Text style={{ fontSize: 22, fontWeight: '800', color: C.ok }}>{code}</Text>
+        <Text style={{ fontSize: 22, fontWeight: '700', color: C.ok }}>{code}</Text>
         <P>20% off your next order.</P>
       </Card>
       <Button title="Go to cart" onPress={() => navigation.navigate('Cart')} />
@@ -144,6 +145,7 @@ export function InviteScreen({ route }: Props<'Invite'>) {
 export function NotRecognisedScreen({ route }: Props<'NotRecognised'>) {
   const { path, fromLink } = route.params;
   const { pass } = useStore();
+  const { C } = useTheme();
   useEffect(() => {
     if (fromLink) pass('nav_unknown', `Unknown path ${path} handled`);
   }, [fromLink, path, pass]);

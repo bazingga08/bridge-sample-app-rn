@@ -4,13 +4,15 @@
  * the same way any app would. See README.md.
  */
 import React from 'react';
-import { NavigationContainer } from '@react-navigation/native';
+import { StatusBar } from 'react-native';
+import { DarkTheme, DefaultTheme, NavigationContainer, type Theme } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import type { LinkEvent } from '@strait/sdk-react-native';
 import { navRef, type Stack } from './src/nav';
 import { routeFor } from './src/routes';
 import { StoreProvider } from './src/store';
 import { OpeningOverlay } from './src/OpeningOverlay';
+import { useTheme } from './src/ui';
 import { HomeScreen } from './src/screens/Home';
 import { FingerprintScreen, InspectorScreen, SettingsScreen, TestLinksScreen } from './src/screens/Tools';
 import {
@@ -68,16 +70,24 @@ function handleLink(e: LinkEvent, ctx: { loggedIn: boolean; setNotice: (n: strin
 }
 
 export default function App(): React.JSX.Element {
+  const { C, dark } = useTheme();
+  const base = dark ? DarkTheme : DefaultTheme;
+  const navTheme: Theme = {
+    ...base,
+    colors: { ...base.colors, primary: C.accentText, background: C.bg, card: C.card, text: C.ink, border: C.line },
+  };
   return (
     <StoreProvider onLink={handleLink}>
+      <StatusBar barStyle={dark ? 'light-content' : 'dark-content'} backgroundColor={C.card} />
       <NavigationContainer
         ref={navRef}
+        theme={navTheme}
         onReady={() => {
           pending?.();
           pending = null;
         }}
       >
-        <S.Navigator screenOptions={{ headerTintColor: '#0b6b57' }}>
+        <S.Navigator screenOptions={{ headerTintColor: C.ink }}>
           <S.Screen name="Home" component={HomeScreen} options={{ title: 'Strait Link' }} />
           <S.Screen name="TestLinks" component={TestLinksScreen} options={{ title: 'Test links' }} />
           <S.Screen name="Inspector" component={InspectorScreen} options={{ title: 'Link Inspector' }} />

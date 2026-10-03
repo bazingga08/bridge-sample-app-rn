@@ -3,7 +3,7 @@ import { AppState, Linking, Share, Text, TextInput, View } from 'react-native';
 import { describeEvent } from '../checklist';
 import { BROWSER_LINK_PAGE, FINGERPRINT_PAGE, PRIVACY_POLICY_URL, TEST_LINKS } from '../config';
 import { useStore } from '../store';
-import { Button, C, Card, H1, H2, Mono, P, Pill, Row, Screen, s } from '../ui';
+import { Button, Card, H1, H2, Mono, P, Pill, Row, Screen, useTheme } from '../ui';
 
 /**
  * Open a page in the browser. The pages live on GitHub Pages, which this app
@@ -80,6 +80,7 @@ export function InspectorScreen() {
 }
 
 function KV({ k, v }: { k: string; v: string }) {
+  const { C } = useTheme();
   return (
     <View style={{ gap: 2 }}>
       <Text style={{ fontSize: 11.5, color: C.muted, fontWeight: '700', letterSpacing: 0.4 }}>{k.toUpperCase()}</Text>
@@ -160,6 +161,7 @@ export function SettingsScreen() {
   const [ep, setEp] = useState(endpoint);
   const [key, setKey] = useState(publishableKey);
   const [saved, setSaved] = useState(false);
+  const { C, s } = useTheme();
   return (
     <Screen>
       <H1>Settings</H1>
@@ -167,9 +169,9 @@ export function SettingsScreen() {
         <H2>Strait setup</H2>
         <P muted>The link host and your workspace's publishable key (Dashboard → Get started).</P>
         <Text style={{ color: C.muted }}>Link host</Text>
-        <TextInput style={input} value={ep} onChangeText={setEp} autoCapitalize="none" />
+        <TextInput style={s.input} value={ep} onChangeText={setEp} autoCapitalize="none" />
         <Text style={{ color: C.muted }}>Publishable key</Text>
-        <TextInput style={input} value={key} onChangeText={setKey} autoCapitalize="none" />
+        <TextInput style={s.input} value={key} onChangeText={setKey} autoCapitalize="none" />
         <Button
           title={saved ? 'Saved' : 'Save'}
           onPress={async () => {
@@ -196,4 +198,3 @@ export function SettingsScreen() {
   );
 }
 
-const input = [s.mono, { borderWidth: 1, borderColor: C.line, borderRadius: 8, padding: 10, backgroundColor: '#fff' }];

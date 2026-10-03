@@ -3,11 +3,12 @@ import { Pressable, Text, View } from 'react-native';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { ALL_ITEMS, SECTIONS, type Item } from '../checklist';
 import { useStore } from '../store';
-import { Banner, Button, C, Card, H1, H2, P, Pill, Row, Screen } from '../ui';
+import { Banner, Button, Card, H1, H2, P, Pill, Row, Screen, useTheme } from '../ui';
 import type { Stack } from '../nav';
 
 export function HomeScreen({ navigation }: NativeStackScreenProps<Stack, 'Home'>) {
   const { results, notice, setNotice } = useStore();
+  const { C } = useTheme();
   const passed = ALL_ITEMS.filter((i) => results[i.id]?.passed).length;
 
   return (
@@ -18,12 +19,12 @@ export function HomeScreen({ navigation }: NativeStackScreenProps<Stack, 'Home'>
         itself when the app sees it work. Tap a row for steps.
       </P>
       <Card style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-        <Text style={{ fontSize: 28, fontWeight: '800', color: C.ink }}>
+        <Text style={{ fontSize: 28, fontWeight: '700', color: C.ink }}>
           {passed}
           <Text style={{ fontSize: 16, color: C.muted }}> / {ALL_ITEMS.length} passed</Text>
         </Text>
         <View style={{ width: 120, height: 8, borderRadius: 4, backgroundColor: C.idleBg }}>
-          <View style={{ width: `${(passed / ALL_ITEMS.length) * 100}%`, height: 8, borderRadius: 4, backgroundColor: C.ok }} />
+          <View style={{ width: `${(passed / ALL_ITEMS.length) * 100}%`, height: 8, borderRadius: 4, backgroundColor: C.accent }} />
         </View>
       </Card>
       {notice && (
@@ -52,6 +53,7 @@ export function HomeScreen({ navigation }: NativeStackScreenProps<Stack, 'Home'>
 
 function ItemRow({ item }: { item: Item }) {
   const { results } = useStore();
+  const { C } = useTheme();
   const [open, setOpen] = useState(false);
   const r = results[item.id];
   return (

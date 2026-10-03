@@ -1,0 +1,6 @@
+<resources>
+    <!-- Strait tokens: bg-subtle / surface (light). Dark values live in values-night. -->
+    <color name="strait_bg">#FAF8F6</color>
+    <color name="strait_surface">#FFFFFF</color>
+    <color name="strait_brand">#F47A1F</color>
+</resources>
