@@ -41,11 +41,24 @@ export function TestLinksScreen() {
 }
 
 export function InspectorScreen() {
-  const { events } = useStore();
+  const { events, bridge } = useStore();
+  // Open reports the SDK couldn't send yet (offline): it retries on its own.
+  const [pending, setPending] = useState<number | null>(null);
+  const refresh = useCallback(() => void bridge.pendingOpenReports().then(setPending, () => setPending(null)), [bridge]);
+  useEffect(() => {
+    refresh();
+    const sub = AppState.addEventListener('change', (st) => st === 'active' && setTimeout(refresh, 1500));
+    return () => sub.remove();
+  }, [refresh, events.length]);
   return (
     <Screen>
       <H1>Link Inspector</H1>
       <P muted>Every link the app has received this session, newest first, as reported by the Bridge SDK.</P>
+      <Card>
+        <H2>Analytics reports</H2>
+        <P>Every open is reported to Bridge. Waiting to send (offline): {pending ?? '…'}</P>
+        <Button title="Send now" kind="ghost" onPress={() => void bridge.flushOpenReports().then(refresh)} />
+      </Card>
       {events.length === 0 && <P>No links yet. Open a test link to see it here.</P>}
       {events.map((e) => (
         <Card key={e.id}>
@@ -57,6 +70,8 @@ export function InspectorScreen() {
           {e.rawUrl && <KV k="App received" v={e.rawUrl} />}
           {e.url && <KV k="Destination" v={e.url} />}
           {e.linkId && <KV k="Link ID" v={e.linkId} />}
+          <KV k="Open ID" v={e.id} />
+          <KV k="Route · app state" v={`${e.route} · ${e.appState}`} />
           <KV k="Time" v={new Date(e.at).toLocaleTimeString()} />
         </Card>
       ))}

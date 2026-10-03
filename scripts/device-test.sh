@@ -31,7 +31,13 @@ print((u.netloc+u.path) if u else "")' 2>/dev/null
 }
 expect_chrome_page() {  # name, expected host/path
   local t0=$SECONDS got=""
-  while (( SECONDS - t0 < 20 )); do got="$(top) $(chrome_page)"; [[ "$got" == *"com.android.chrome"*"$2"* ]] && break; sleep 1; done
+  # DevTools' first tab isn't always the visible one (many tabs open), so also
+  # accept the address bar on screen showing the expected page.
+  while (( SECONDS - t0 < 20 )); do
+    got="$(top) $(chrome_page)"; [[ "$got" == *"com.android.chrome"*"$2"* ]] && break
+    [[ "$(top)" == *"com.android.chrome"* ]] && texts | grep -qF "$2" && { got="com.android.chrome (address bar) $2"; break; }
+    sleep 1
+  done
   check "$1 [$(( SECONDS - t0 ))s]" "$2" "$got"
 }
 fresh() { echo "?t=$(date +%s%N)"; }
@@ -64,7 +70,7 @@ install_app() {
   local flag="${1:-}"
   ( adb install $flag "$APK" >/dev/null 2>&1 ) & local pid=$!
   ( sleep 120; kill $pid 2>/dev/null ) & local watchdog=$!
-  wait $pid; local rc=$?; kill $watchdog 2>/dev/null
+  wait $pid; local rc=$?; kill $watchdog 2>/dev/null; wait $watchdog 2>/dev/null
   [ $rc -eq 0 ] || { echo "Install failed or hung (exit $rc). Close screen-mirroring tools and retry."; exit 3; }
   adb shell pm set-app-links-user-selection --package $P --user 0 true "${E#https://}" >/dev/null 2>&1
 }
