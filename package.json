@@ -12,10 +12,10 @@
     "build:release": "cd android && ./gradlew assembleRelease"
   },
   "dependencies": {
-    "@strait/sdk-react-native": "file:../../sdk-react-native",
     "@react-native-async-storage/async-storage": "^1.24.0",
     "@react-navigation/native": "^6.1.18",
     "@react-navigation/native-stack": "^6.11.0",
+    "@strait/sdk-react-native": "file:../../sdk-react-native",
     "react": "18.3.1",
     "react-native": "0.75.4",
     "react-native-play-install-referrer": "^1.1.9",
