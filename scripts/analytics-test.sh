@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 # Real-phone ANALYTICS suite: every way a link can reach (or miss) the app, and
 # the exact rows Strait must record for each — taps, app opens, joins between
-# them (same tap letter), new vs existing user, app state, failures.
+# them (same tap letter), new vs existing user, app state, failures. Since
+# engine B16 a verified-link open records its tap AND joins it (same letter).
 #   scripts/analytics-test.sh [path/to/app-release.apk]
 # Needs: one Android phone on adb (Chrome, Samsung Internet, Firefox, Edge
 # installed), the release APK, and redirect-engine/.env (database access).
@@ -64,19 +65,19 @@ expect "Not installed: Chrome tap → Play Store = 1 store-bound tap, no open" "
 
 echo "▶ 2. Install; first launch from a link"
 install_app; S=$(now); direct "$E/bl-product?utm_source=whatsapp"
-expect "First launch from a WhatsApp-style tap = tap + NEW USER open" "$S" "OPEN bl-product app_link closed new ok tap=-
-TAP bl-product app_link - tap=-"
+expect "First launch from a WhatsApp-style tap = tap + NEW USER open" "$S" "OPEN bl-product app_link closed new ok tap=A
+TAP bl-product app_link - tap=A"
 
 echo "▶ 3. App running"
 home; S=$(now); direct "$E/bl-category"
-expect "Background: tap + open (background, existing user)" "$S" "OPEN bl-category app_link background existing ok tap=-
-TAP bl-category app_link - tap=-"
+expect "Background: tap + open (background, existing user)" "$S" "OPEN bl-category app_link background existing ok tap=A
+TAP bl-category app_link - tap=A"
 S=$(now); direct "$E/bl-invite"
-expect "On screen: tap + open (foreground)" "$S" "OPEN bl-invite app_link foreground existing ok tap=-
-TAP bl-invite app_link - tap=-"
+expect "On screen: tap + open (foreground)" "$S" "OPEN bl-invite app_link foreground existing ok tap=A
+TAP bl-invite app_link - tap=A"
 killapp; S=$(now); direct "$E/bl-product"
-expect "Closed (killed): tap + open (closed, existing user)" "$S" "OPEN bl-product app_link closed existing ok tap=-
-TAP bl-product app_link - tap=-"
+expect "Closed (killed): tap + open (closed, existing user)" "$S" "OPEN bl-product app_link closed existing ok tap=A
+TAP bl-product app_link - tap=A"
 
 echo "▶ 4. Browsers hand off to the app"
 home; S=$(now); adb shell am start -a android.intent.action.VIEW -d "$E/bl-promo?t=$(date +%s)" -p com.android.chrome --ez create_new_tab true >/dev/null 2>&1; sleep 10
@@ -89,8 +90,8 @@ S=$(now); from_page com.microsoft.emmx bl-promo
 expect "Edge (loads link, then hands https to the app): ONE tap, open joined" "$S" "OPEN bl-promo app_link background existing ok tap=A
 TAP bl-promo web app_or_store tap=A"
 S=$(now); from_page org.mozilla.firefox bl-invite
-expect "Firefox (hands https straight to the app): one tap + open" "$S" "OPEN bl-invite app_link background existing ok tap=-
-TAP bl-invite app_link - tap=-"
+expect "Firefox (hands https straight to the app): one tap + open" "$S" "OPEN bl-invite app_link background existing ok tap=A
+TAP bl-invite app_link - tap=A"
 
 echo "▶ 5. Offline"
 home; adb shell svc wifi disable; adb shell svc data disable; sleep 4; S=$(now)
@@ -98,8 +99,8 @@ direct "$E/bl-order"; sleep 3
 adb shell svc wifi enable; adb shell svc data enable
 for i in $(seq 1 20); do sleep 2; adb shell ping -c1 -W2 8.8.8.8 >/dev/null 2>&1 && break; done
 home; adb shell monkey -p $P -c android.intent.category.LAUNCHER 1 >/dev/null 2>&1; sleep 8
-expect "Offline tap: saved, sent on return — open (failed: network) + tap, once" "$S" "OPEN bl-order app_link background existing failed:network tap=-
-TAP bl-order app_link - tap=-"
+expect "Offline tap: saved, sent on return — open (failed: network) + tap, once" "$S" "OPEN bl-order app_link background existing failed:network tap=A
+TAP bl-order app_link - tap=A"
 
 echo "▶ 6. Broken and non-Strait links"
 S=$(now); direct "$E/bl-expired"; direct "$E/no-such-link-$(date +%s)"; direct "straitlink://shop.example/p/7?src=qr"
